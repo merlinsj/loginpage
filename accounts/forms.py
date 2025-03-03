@@ -1,21 +1,25 @@
-# accounts/forms.py
-
 from django import forms
-from django.contrib.auth.models import User
+from django.contrib.auth.forms import UserCreationForm
+from .models import CustomUser
 
-class SignupForm(forms.ModelForm):
-    password = forms.CharField(widget=forms.PasswordInput())
-    confirm_password = forms.CharField(widget=forms.PasswordInput())
-
+class CustomUserCreationForm(UserCreationForm):
     class Meta:
-        model = User
-        fields = ['username', 'email', 'password']
+        model = CustomUser
+        fields = ['username', 'email', 'password1', 'password2', 'role', 'security_code']
 
-    def clean(self):
-        cleaned_data = super().clean()
-        password = cleaned_data.get("password")
-        confirm_password = cleaned_data.get("confirm_password")
+    def clean_security_code(self):
+        role = self.cleaned_data.get('role')
+        security_code = self.cleaned_data.get('security_code')
 
-        if password != confirm_password:
-            self.add_error('confirm_password', "Passwords do not match.")
+        # Define valid security codes for each role
+        valid_security_codes = {
+            'student': 'student123',  # Replace with actual code for students
+            'teacher': 'teacher123',  # Replace with actual code for teachers
+            'admin': 'admin123',  # Optional, Admin validation handled by superuser
+        }
 
+        if role in valid_security_codes:
+            if security_code != valid_security_codes[role]:
+                raise forms.ValidationError(f"Invalid security code for {role}s.")
+
+        return security_code

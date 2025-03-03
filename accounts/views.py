@@ -1,82 +1,62 @@
 from django.contrib.auth import authenticate, login
 from django.contrib.auth.models import User
-# In views.py, instead of importing Profile at the top, import it inside the function that needs it
-def some_view(request):
-    from .models import Profile
-    # Now you can use Profile here without circular import
+from rest_framework.response import Response
+from rest_framework.decorators import api_view
+from rest_framework.authtoken.models import Token
+from django.core.mail import send_mail
+from django.shortcuts import redirect
+import random, string
 
-from django.http import JsonResponse
-from django.views.decorators.csrf import csrf_exempt
-import json
-from .models import CustomUser, Profile
-from decouple import config
+from django.contrib.auth import get_user_model
 
-# Security codes for students and teachers (now from environment variables)
-STUDENT_SECURITY_CODE = config('STUDENT_SECURITY_CODE', default="student123")
-TEACHER_SECURITY_CODE = config('TEACHER_SECURITY_CODE', default="teacher123")
+User = get_user_model()
 
-@csrf_exempt
+@api_view(["POST"])
 def signup(request):
-    if request.method == 'POST':
-        try:
-            data = json.loads(request.body)
-            username = data.get('username')
-            email = data.get('email')
-            password = data.get('password')
-            role = data.get('role')
-            security_code = data.get('securityCode')
+    data = request.data
+    print("Received data:", data)  # Debugging
 
-            # Validate required fields
-            if not all([username, email, password, role]):
-                return JsonResponse({'error': 'Missing required fields'}, status=400)
-
-            # Check if username already exists
-            if User.objects.filter(username=username).exists():
-                return JsonResponse({'error': 'Username already taken'}, status=400)
-
-            # Validate security code for students and teachers
-            if role == 'student' and security_code != STUDENT_SECURITY_CODE:
-                return JsonResponse({'error': 'Invalid student security code'}, status=400)
-            elif role == 'teacher' and security_code != TEACHER_SECURITY_CODE:
-                return JsonResponse({'error': 'Invalid teacher security code'}, status=400)
-
-            # Create custom user
-            user = CustomUser.objects.create_user(username=username, email=email, password=password, role=role)
-            user.save()
-
-            # Create profile for the user if needed (for student/teacher)
-            if role in ['student', 'teacher']:
-                Profile.objects.create(user=user, role=role)
-
-            return JsonResponse({'message': 'User created successfully'}, status=201)
-        except Exception as e:
-            return JsonResponse({'error': str(e)}, status=500)
-    else:
-        return JsonResponse({'error': 'Invalid request method. Only POST is allowed.'}, status=400)
+    valid_codes = {'student': 'student123', 'teacher': 'teacher123'}
+    
+    role = data.get("role")
+    security_code = data.get("security_code")
+    
+    if role not in valid_codes or security_code != valid_codes[role]:
+        print("Invalid security code")  # Debugging
+        return Response({"error": "Invalid security code"}, status=400)
+    
+    try:
+        user = User.objects.create_user(
+            username=data.get("username"),
+            email=data.get("email"),
+            password=data.get("password")
+        )
+        user.role = role
+        user.security_code = security_code
+        user.save()
+        print("User created successfully!")  # Debugging
+        return Response({"message": "Signup successful! Redirecting to login..."}, status=201)
+    except Exception as e:
+        print("Signup error:", str(e))  # Debugging
+        return Response({"error": "Signup failed. Please check your details."}, status=400)
 
 
-@csrf_exempt
-def user_login(request):
-    if request.method == 'POST':
-        try:
-            data = json.loads(request.body)
-            username = data.get('username')
-            password = data.get('password')
+@api_view(["POST"])
+def login_view(request):
+    user = authenticate(username=request.data.get("username"), password=request.data.get("password"))
+    if user:
+        token, _ = Token.objects.get_or_create(user=user)
+        role = "admin" if user.is_superuser else "user"
+        return Response({"token": token.key, "role": role})
+    return Response({"error": "Invalid credentials"}, status=400)
 
-            if not all([username, password]):
-                return JsonResponse({'error': 'Missing username or password'}, status=400)
-
-            user = authenticate(username=username, password=password)
-            if user:
-                # Check if admin user is a superuser
-                if user.role == 'admin' and not user.is_superuser:
-                    return JsonResponse({'error': 'Only superusers can login as admin'}, status=403)
-
-                login(request, user)
-                return JsonResponse({'message': 'Login successful'}, status=200)
-            else:
-                return JsonResponse({'error': 'Invalid credentials'}, status=400)
-        except Exception as e:
-            return JsonResponse({'error': str(e)}, status=500)
-    else:
-        return JsonResponse({'error': 'Invalid request method. Only POST is allowed.'}, status=400)
+@api_view(["POST"])
+def forgot_password(request):
+    email = request.data.get("email")
+    user = User.objects.filter(email=email).first()
+    if user:
+        new_password = "".join(random.choices(string.ascii_letters + string.digits, k=8))
+        user.set_password(new_password)
+        user.save()
+        send_mail("Password Reset", f"Your new password is {new_password}", "admin@tracker.com", [email])
+    return Response({"message": "If your email is registered, you’ll receive a reset link."})

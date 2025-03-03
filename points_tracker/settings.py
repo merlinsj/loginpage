@@ -9,28 +9,24 @@ https://docs.djangoproject.com/en/5.1/topics/settings/
 For the full list of settings and their values, see
 https://docs.djangoproject.com/en/5.1/ref/settings/
 """
-
 from pathlib import Path
-AUTH_USER_MODEL = 'accounts.CustomUser'
 
-# Build paths inside the project like this: BASE_DIR / 'subdir'.
+# Custom User Model
+AUTH_USER_MODEL = 'accounts.CustomUser'  # Ensure CustomUser model is defined in the accounts app
+
+# Base Directory
 BASE_DIR = Path(__file__).resolve().parent.parent
 
-
-# Quick-start development settings - unsuitable for production
-# See https://docs.djangoproject.com/en/5.1/howto/deployment/checklist/
-
-# SECURITY WARNING: keep the secret key used in production secret!
+# Secret Key (Remember to use a proper secret key in production)
 SECRET_KEY = 'django-insecure-9dtxx*kkat1yj(^_&pkwk&7iov9l*bx-=$-1-#=y%)@3aov-sp'
 
-# SECURITY WARNING: don't run with debug turned on in production!
+# Debugging Mode (Don't use DEBUG=True in production)
 DEBUG = True
 
+# Allowed Hosts (Set this in production)
 ALLOWED_HOSTS = []
 
-
-# Application definition
-
+# Applications (Installed apps including REST framework, CORS headers, custom accounts)
 INSTALLED_APPS = [
     'django.contrib.admin',
     'django.contrib.auth',
@@ -38,12 +34,13 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
-    'rest_framework',
-    'rest_framework.authtoken', 
-    'accounts',
-    'corsheaders',
+    'rest_framework',  # For API views
+    'rest_framework.authtoken',  # For token authentication (you can remove if you're using JWT)
+    'accounts',  # Your custom app for handling users
+    'corsheaders',  # To handle CORS for cross-origin requests
 ]
 
+# Middleware for handling requests, security, and CORS
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
@@ -52,18 +49,18 @@ MIDDLEWARE = [
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
-    'corsheaders.middleware.CorsMiddleware',
+    'corsheaders.middleware.CorsMiddleware',  # Middleware to allow CORS
 ]
 
+# URL Configuration
 ROOT_URLCONF = 'points_tracker.urls'
 
-# points_tracker/settings.py
-
+# Template Settings (If you're using HTML templates in Django, configure here)
 TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
-        'DIRS': [],  # This can be empty if you're using app-level templates
-        'APP_DIRS': True,  # Ensure this is True to load templates from apps
+        'DIRS': [],  # Empty if using app-level templates
+        'APP_DIRS': True,  # Ensure this is True to look for templates within each app
         'OPTIONS': {
             'context_processors': [
                 'django.template.context_processors.debug',
@@ -75,13 +72,10 @@ TEMPLATES = [
     },
 ]
 
-
+# WSGI Application
 WSGI_APPLICATION = 'points_tracker.wsgi.application'
 
-
-# Database
-# https://docs.djangoproject.com/en/5.1/ref/settings/#databases
-
+# Database Configuration (SQLite is good for development, but use Postgres or MySQL for production)
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.sqlite3',
@@ -89,10 +83,7 @@ DATABASES = {
     }
 }
 
-
-# Password validation
-# https://docs.djangoproject.com/en/5.1/ref/settings/#auth-password-validators
-
+# Password Validation (You can modify or extend these based on your security requirements)
 AUTH_PASSWORD_VALIDATORS = [
     {
         'NAME': 'django.contrib.auth.password_validation.UserAttributeSimilarityValidator',
@@ -108,50 +99,37 @@ AUTH_PASSWORD_VALIDATORS = [
     },
 ]
 
-
-# Internationalization
-# https://docs.djangoproject.com/en/5.1/topics/i18n/
-
+# Localization Settings
 LANGUAGE_CODE = 'en-us'
-
 TIME_ZONE = 'UTC'
-
 USE_I18N = True
-
 USE_TZ = True
 
-
 # Static files (CSS, JavaScript, Images)
-# https://docs.djangoproject.com/en/5.1/howto/static-files/
+STATIC_URL = 'static/'  # URL for serving static files
+STATIC_ROOT = BASE_DIR / 'staticfiles'  # Location where static files are collected for production
 
-
-
-# Default primary key field type
-# https://docs.djangoproject.com/en/5.1/ref/settings/#default-auto-field
-
-DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
-# Static files (CSS, JavaScript, Images)
-STATIC_URL = 'static/'
-
-# Directory where collectstatic will collect static files for deployment
-STATIC_ROOT = BASE_DIR / 'staticfiles'
-
-# Optional: Add directories to find additional static files (for development)
+# Directory for additional static files (useful for development)
 STATICFILES_DIRS = [
     BASE_DIR / 'static',
 ]
+
+# CORS Settings to allow requests from your React app (Change for production)
+CORS_ALLOWED_ORIGINS = [
+    "http://localhost:3000",  # Allowing localhost:3000 for development
+]
+CORS_ALLOW_ALL_ORIGINS = True  # Enable if you want to allow all origins for development
+
+# JWT Authentication (for using JWT tokens in API authentication)
 REST_FRAMEWORK = {
     'DEFAULT_AUTHENTICATION_CLASSES': [
         'rest_framework_simplejwt.authentication.JWTAuthentication',
     ],
 }
-CORS_ALLOWED_ORIGINS = [
-    "http://localhost:3000",  # React's default dev server
-]
-CORS_ALLOW_ALL_ORIGINS = True 
 
-
-# In settings.py
+# Media Files Configuration (for file uploads)
 MEDIA_URL = '/media/'
 MEDIA_ROOT = BASE_DIR / 'media'
 
+# Default primary key field type (Auto-incrementing integer or BigAutoField)
+DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
