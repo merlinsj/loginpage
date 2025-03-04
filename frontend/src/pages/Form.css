@@ -1,0 +1,139 @@
+/* General Styling */
+body {
+    font-family: 'Roboto', sans-serif;
+    background: url('https://source.unsplash.com/1600x900/?nature,technology') no-repeat center center fixed;
+    background-size: cover;
+    margin: 0;
+    padding: 0;
+    color: #333;
+}
+
+/* Form Container */
+.form-container {
+    background: rgba(255, 255, 255, 0.9);  /* Slightly transparent white background */
+    padding: 3rem;
+    max-width: 450px;
+    margin: 5rem auto;
+    border-radius: 10px;
+    box-shadow: 0 8px 30px rgba(0, 0, 0, 0.2); /* Soft shadow for floating effect */
+    text-align: center;
+}
+
+/* Heading Styling */
+h2 {
+    font-size: 28px;
+    color: #333;
+    margin-bottom: 20px;
+    font-weight: 600;
+}
+
+/* Form Styling */
+form {
+    display: flex;
+    flex-direction: column;
+    gap: 1.5rem;
+    align-items: center;  /* Center elements horizontally */
+}
+
+/* Label Styling */
+label {
+    font-size: 16px;
+    font-weight: 500;
+    color: #444;
+    text-align: left;
+    width: 100%;
+    margin-bottom: 5px;
+}
+
+/* Input, Select, Textarea Styling */
+input, select, textarea {
+    width: 100%;
+    padding: 12px;
+    border: 1px solid #ccc;
+    border-radius: 8px;
+    font-size: 16px;
+    margin-bottom: 1rem;
+    transition: border-color 0.3s ease-in-out;
+}
+
+/* Input Focus Styling */
+input:focus, select:focus, textarea:focus {
+    border-color: #5c67f2; /* Blue border when focused */
+    outline: none;
+}
+
+/* Button Styling */
+button {
+    width: 100%;
+    padding: 12px;
+    background-color: #5c67f2;
+    color: #fff;
+    border: none;
+    border-radius: 8px;
+    font-size: 16px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+}
+
+/* Button Hover Styling */
+button:hover {
+    background-color: #4b54d4;
+}
+
+/* Button Disabled Styling */
+button:disabled {
+    background-color: #bbb;
+    cursor: not-allowed;
+}
+
+/* Error Message Styling */
+.error {
+    color: #e74c3c;
+    font-size: 0.9rem;
+    margin-bottom: 1rem;
+    text-align: center;
+    font-weight: 500;
+}
+
+/* Success Message Styling */
+.success {
+    color: #2ecc71;
+    font-size: 0.9rem;
+    margin-bottom: 1rem;
+    text-align: center;
+    font-weight: 500;
+}
+
+/* Responsive Design */
+@media (max-width: 600px) {
+    .form-container {
+        width: 90%;  /* Ensure the form takes up 90% of the screen width on small screens */
+        margin: 2rem auto;
+        padding: 2rem;
+    }
+
+    h2 {
+        font-size: 24px;  /* Smaller font size for small screens */
+    }
+
+    input, select, textarea, button {
+        font-size: 14px;  /* Smaller font size for form elements */
+    }
+}
+
+/* Animation for loading spinner */
+.loading-spinner {
+    display: inline-block;
+    border: 4px solid #f3f3f3;
+    border-top: 4px solid #5c67f2;
+    border-radius: 50%;
+    width: 24px;
+    height: 24px;
+    animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
+}
