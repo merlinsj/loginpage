@@ -133,3 +133,5 @@ MEDIA_ROOT = BASE_DIR / 'media'
 
 # Default primary key field type (Auto-incrementing integer or BigAutoField)
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
+# For testing emails in the console
+EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'

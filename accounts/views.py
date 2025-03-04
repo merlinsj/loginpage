@@ -54,9 +54,17 @@ def login_view(request):
 def forgot_password(request):
     email = request.data.get("email")
     user = User.objects.filter(email=email).first()
+    
     if user:
         new_password = "".join(random.choices(string.ascii_letters + string.digits, k=8))
         user.set_password(new_password)
         user.save()
-        send_mail("Password Reset", f"Your new password is {new_password}", "admin@tracker.com", [email])
-    return Response({"message": "If your email is registered, you’ll receive a reset link."})
+        send_mail(
+            "Password Reset",
+            f"Your new password is: {new_password}",
+            "admin@tracker.com",
+            [email],
+        )
+        return Response({"message": "Password reset instructions have been sent to your email."})
+    
+    return Response({"error": "Email not found."}, status=400)
