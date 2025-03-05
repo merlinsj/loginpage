@@ -23,22 +23,58 @@ const Login = () => {
   };
 
   return (
-    <div className="flex items-center justify-center min-h-screen bg-gray-200">
-      <div className="bg-white p-8 rounded-lg shadow-lg w-96">
-        <h2 className="text-2xl font-semibold mb-6 text-center">Login</h2>
-        {error && <p className="text-red-500 text-center">{error}</p>}
-        <form onSubmit={handleSubmit} className="space-y-4">
-          <input type="text" name="username" placeholder="Username" required className="input-style" onChange={handleChange} />
-          <input type="password" name="password" placeholder="Password" required className="input-style" onChange={handleChange} />
-          <button type="submit" className="btn-primary">Login</button>
+    <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-purple-500 to-blue-600">
+      <div className="w-[450px] backdrop-blur-md bg-white/30 p-8 rounded-2xl shadow-lg max-w-md w-full">
+        <h2 className="text-4xl font-bold text-center text-white mb-8">Login</h2>
+
+        {error && <p className="text-center text-red-500 mb-4">{error}</p>}
+
+        <form onSubmit={handleSubmit} className="space-y-6">
+          <div className="flex items-center bg-white/80 p-3 rounded-lg border">
+       
+            <input 
+              type="text" 
+              name="username" 
+              placeholder="Username" 
+              value={formData.username} 
+              onChange={handleChange} 
+              required 
+              className="w-full bg-transparent outline-none text-gray-700"
+            />
+          </div>
+
+          <div className="flex items-center bg-white/80 p-3 rounded-lg border">
+           
+            <input 
+              type="password" 
+              name="password" 
+              placeholder="Password" 
+              value={formData.password} 
+              onChange={handleChange} 
+              required 
+              className="w-full bg-transparent outline-none text-gray-700"
+            />
+          </div>
+
+          <div className="flex items-center justify-between w-full mt-2">
+  <a href="/forgot-password" className="text-blue-300 hover:underline">
+    Forgot Password?
+  </a>
+</div>
+
+
+
+
+          <button 
+            type="submit" 
+            className="w-full py-3 bg-blue-700 text-white font-bold rounded-lg hover:bg-blue-800 transition"
+          >
+            Login
+          </button>
         </form>
-        <p className="text-center mt-4">
-          <a href="/forgot-password" className="text-blue-500">Forgot Password?</a>
-        </p>
       </div>
     </div>
   );
 };
 
 export default Login;
-
